@@ -1,0 +1,647 @@
+
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Noras Quest – Å trene hjernen</title>
+
+<style>
+:root {
+  --bg:#100c25;
+  --panel:#21183f;
+  --pink:#ff73c6;
+  --purple:#a78bfa;
+  --cyan:#65e9ff;
+  --text:#fff7ff;
+  --muted:#c8bedc;
+}
+* {box-sizing:border-box}
+body {
+  margin:0;
+  color:var(--text);
+  font-family:Trebuchet MS,Arial,sans-serif;
+  background:
+    radial-gradient(circle at 15% 5%,#493077,transparent 35%),
+    radial-gradient(circle at 90% 20%,#3d235a,transparent 35%),
+    var(--bg);
+  min-height:100vh;
+}
+header {
+  padding:35px 18px;
+  text-align:center;
+}
+.logo {
+  font-size:13px;
+  letter-spacing:4px;
+  color:var(--cyan);
+  font-weight:bold;
+}
+h1 {
+  font-size:clamp(32px,7vw,60px);
+  margin:12px 0;
+  color:var(--pink);
+  text-shadow:3px 3px #573b9b;
+}
+.subtitle {color:var(--muted)}
+main {max-width:1050px;margin:auto;padding:15px}
+.panel,.quest {
+  background:rgba(33,24,63,.94);
+  border:1px solid #66518b;
+  border-radius:20px;
+  padding:22px;
+  margin-bottom:18px;
+  box-shadow:0 8px 25px #08051370;
+}
+.stats {
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px;
+}
+.stat {
+  background:#302451;
+  padding:20px 10px;
+  border-radius:15px;
+  text-align:center;
+}
+.stat strong {
+  display:block;
+  font-size:30px;
+  color:var(--cyan);
+}
+.stat span {font-size:12px;color:var(--muted)}
+.bar {
+  height:16px;
+  border-radius:20px;
+  background:#100d27;
+  overflow:hidden;
+  margin-top:15px;
+}
+.fill {
+  height:100%;
+  background:linear-gradient(90deg,var(--purple),var(--pink));
+  width:0%;
+  transition:width .3s;
+}
+h2 {color:var(--pink)}
+.quest-grid {
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  gap:16px;
+}
+.quest {margin:0}
+.quest h3 {font-size:19px;min-height:50px}
+.emoji {font-size:37px}
+.small {font-size:13px;color:var(--muted)}
+.rating {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:8px;
+  margin:15px 0;
+}
+.rating strong {font-size:28px;color:var(--cyan)}
+input[type=range] {width:100%;accent-color:var(--pink)}
+button {
+  cursor:pointer;
+  border:0;
+  border-radius:12px;
+  padding:12px 15px;
+  font-weight:bold;
+  color:#1b1030;
+  background:var(--pink);
+}
+button:hover {filter:brightness(1.12)}
+button.secondary {
+  background:#453765;
+  color:white;
+}
+button.danger {background:#ff8d9a}
+button:disabled {opacity:.5;cursor:not-allowed}
+.actions {display:flex;flex-wrap:wrap;gap:8px}
+.reward {
+  color:#ffe68a;
+  font-weight:bold;
+  margin:12px 0;
+}
+.history-item {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  padding:14px 0;
+  border-bottom:1px solid #493962;
+}
+.history-item:last-child {border:0}
+.history-actions {display:flex;gap:6px;flex-shrink:0}
+.history-actions button {padding:8px}
+input[type=date] {
+  background:#342750;
+  color:white;
+  border:1px solid #746197;
+  border-radius:9px;
+  padding:10px;
+  max-width:100%;
+}
+label {display:block;margin:10px 0}
+.note {
+  background:#35264f;
+  padding:15px;
+  border-radius:12px;
+  color:#e9d8ff;
+}
+footer {
+  text-align:center;
+  padding:30px;
+  color:var(--muted);
+}
+@media(max-width:550px) {
+  .stats {gap:6px}
+  .stat strong {font-size:23px}
+  .panel,.quest {padding:16px}
+  .history-item {align-items:flex-start;flex-direction:column}
+}
+</style>
+</head>
+
+<body>
+<header>
+  <div class="logo">✦ LEVEL UP YOUR MIND ✦</div>
+  <h1>🌸 NORAS QUEST 🌸</h1>
+  <p class="subtitle">Å trene hjernen – ett modig steg om gangen</p>
+</header>
+
+<main>
+<section class="panel">
+  <h2>✨ Min karakter</h2>
+  <div class="stats">
+    <div class="stat">
+      <strong id="totalXP">0</strong>
+      <span>TOTAL XP</span>
+    </div>
+    <div class="stat">
+      <strong id="level">1</strong>
+      <span>LEVEL</span>
+    </div>
+    <div class="stat">
+      <strong id="weeklyXP">0</strong>
+      <span>XP DENNE UKEN</span>
+    </div>
+  </div>
+  <div class="bar"><div class="fill" id="levelBar"></div></div>
+  <p class="small" id="levelText"></p>
+</section>
+
+<section class="panel">
+  <h2>🎮 Velg dagens quest</h2>
+  <p class="small">
+    Velg hvor vanskelig utfordringen kjennes.
+    Du får XP først når du markerer den som gjennomført.
+    Du kan gjøre samme quest så mange ganger du vil.
+  </p>
+  <div class="quest-grid" id="quests"></div>
+</section>
+
+<section class="panel">
+  <h2>🏆 Ukens progresjon</h2>
+  <div class="stats">
+    <div class="stat">
+      <strong id="weeklyCount">0</strong>
+      <span>GJENNOMFØRT</span>
+    </div>
+    <div class="stat">
+      <strong id="weeklyHard">0</strong>
+      <span>VANSKELIGE QUESTS</span>
+    </div>
+    <div class="stat">
+      <strong id="weeklyDays">0</strong>
+      <span>AKTIVE DAGER</span>
+    </div>
+  </div>
+  <p class="small" id="weekLabel"></p>
+</section>
+
+<section class="panel">
+  <h2>📜 Min quest-logg</h2>
+  <p class="small">
+    Her kan du se, endre og slette gjennomføringer.
+  </p>
+  <div id="history"></div>
+</section>
+
+<section class="panel">
+  <h2>💾 Ta vare på progresjonen</h2>
+  <p class="small">
+    Resultatene lagres automatisk i denne nettleseren.
+    Ta gjerne en sikkerhetskopi.
+  </p>
+  <div class="actions">
+    <button onclick="exportData()">Last ned sikkerhetskopi</button>
+    <button class="secondary"
+      onclick="document.getElementById('importFile').click()">
+      Hent sikkerhetskopi
+    </button>
+    <input type="file" id="importFile" accept=".json"
+      hidden onchange="importData(event)">
+  </div>
+</section>
+
+<section class="panel">
+  <div class="note">
+    🌷 Husk: Du trenger ikke være perfekt.
+    Det viktige er at du øver. Noen dager er vanskeligere
+    enn andre, og du bestemmer selv tempoet.
+  </div>
+</section>
+</main>
+
+<footer>Made for Nora ✦ Your own adventure</footer>
+
+<script>
+const TASKS = [
+  {
+    name:"Gå på skolen selv om jeg ikke vil",
+    emoji:"🏫"
+  },
+  {
+    name:"Snakke med noen jeg ikke kjenner så godt",
+    emoji:"💬"
+  },
+  {
+    name:"Sette meg på bord med noen som ikke går på RM",
+    emoji:"🍱"
+  },
+  {
+    name:"Ta oppvasken på skolen",
+    emoji:"🫧"
+  },
+  {
+    name:"Legge meg tidlig nok til å få nok søvn",
+    emoji:"🌙"
+  }
+];
+
+const STORAGE_KEY = "norasQuestV1";
+let entries = [];
+let pending = [];
+
+function points(rating) {
+  if (rating <= 3) return 10;
+  if (rating <= 6) return 25;
+  return 50;
+}
+
+function difficulty(rating) {
+  if (rating <= 3) return "Lett";
+  if (rating <= 6) return "Middels";
+  return "Skikkelig vanskelig";
+}
+
+function today() {
+  const d = new Date();
+  return localDate(d);
+}
+
+function localDate(d) {
+  return d.getFullYear()+"-"+
+    String(d.getMonth()+1).padStart(2,"0")+"-"+
+    String(d.getDate()).padStart(2,"0");
+}
+
+function startOfWeek() {
+  const d = new Date();
+  d.setHours(12,0,0,0);
+  const day = (d.getDay()+6)%7;
+  d.setDate(d.getDate()-day);
+  return localDate(d);
+}
+
+function validEntry(e) {
+  return e &&
+    typeof e.id === "string" &&
+    Number.isInteger(e.task) &&
+    e.task >= 0 && e.task < TASKS.length &&
+    Number.isInteger(e.rating) &&
+    e.rating >= 1 && e.rating <= 9 &&
+    typeof e.date === "string" &&
+    /^\d{4}-\d{2}-\d{2}$/.test(e.date) &&
+    !Number.isNaN(new Date(e.date+"T12:00:00").getTime());
+}
+
+function load() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+    if (Array.isArray(saved)) {
+      entries = saved.filter(validEntry);
+    }
+  } catch(e) {
+    entries = [];
+  }
+}
+
+function save() {
+  try {
+    localStorage.setItem(STORAGE_KEY,JSON.stringify(entries));
+  } catch(e) {
+    alert("Kunne ikke lagre. Ta en sikkerhetskopi.");
+  }
+}
+
+function createQuests() {
+  const root = document.getElementById("quests");
+  root.innerHTML = "";
+
+  TASKS.forEach((task,i)=>{
+    const card = document.createElement("div");
+    card.className = "quest";
+
+    const emoji = document.createElement("div");
+    emoji.className = "emoji";
+    emoji.textContent = task.emoji;
+
+    const heading = document.createElement("h3");
+    heading.textContent = task.name;
+
+    const ratingLabel = document.createElement("div");
+    ratingLabel.className = "rating";
+
+    const label = document.createElement("span");
+    label.textContent = "Vanskelighetsgrad";
+
+    const value = document.createElement("strong");
+    value.id = "rating-"+i;
+
+    ratingLabel.append(label,value);
+
+    const slider = document.createElement("input");
+    slider.type = "range";
+    slider.min = 1;
+    slider.max = 9;
+    slider.step = 1;
+    slider.value = pending[i];
+
+    const reward = document.createElement("div");
+    reward.className = "reward";
+    reward.id = "reward-"+i;
+
+    const button = document.createElement("button");
+    button.textContent = "✓ Quest gjennomført!";
+    button.onclick = ()=>completeQuest(i);
+
+    slider.oninput = ()=>{
+      pending[i] = Number(slider.value);
+      updateRating(i);
+    };
+
+    card.append(
+      emoji,heading,ratingLabel,slider,reward,button
+    );
+    root.appendChild(card);
+    updateRating(i);
+  });
+}
+
+function updateRating(i) {
+  const r = pending[i];
+  document.getElementById("rating-"+i).textContent = r+"/9";
+  document.getElementById("reward-"+i).textContent =
+    difficulty(r)+" · +"+points(r)+" XP";
+}
+
+function completeQuest(task) {
+  const rating = pending[task];
+
+  entries.push({
+    id:crypto.randomUUID ?
+      crypto.randomUUID() :
+      Date.now()+"-"+Math.random(),
+    task:task,
+    rating:rating,
+    date:today()
+  });
+
+  save();
+  render();
+
+  alert(
+    "QUEST COMPLETE! 🌟\n"+
+    "+"+points(rating)+" XP\n"+
+    "Bra jobbet med å øve!"
+  );
+}
+
+function render() {
+  const total = entries.reduce(
+    (sum,e)=>sum+points(e.rating),0
+  );
+
+  const level = Math.floor(total/200)+1;
+  const progress = total%200;
+  const weekStart = startOfWeek();
+
+  const weekly = entries.filter(
+    e=>e.date>=weekStart && e.date<=today()
+  );
+
+  document.getElementById("totalXP").textContent = total;
+  document.getElementById("level").textContent = level;
+  document.getElementById("weeklyXP").textContent =
+    weekly.reduce((s,e)=>s+points(e.rating),0);
+
+  document.getElementById("levelBar").style.width =
+    (progress/200*100)+"%";
+
+  document.getElementById("levelText").textContent =
+    progress+" / 200 XP mot neste nivå";
+
+  document.getElementById("weeklyCount").textContent =
+    weekly.length;
+
+  document.getElementById("weeklyHard").textContent =
+    weekly.filter(e=>e.rating>=7).length;
+
+  document.getElementById("weeklyDays").textContent =
+    new Set(weekly.map(e=>e.date)).size;
+
+  document.getElementById("weekLabel").textContent =
+    "Uken starter mandag "+weekStart;
+
+  renderHistory();
+}
+
+function renderHistory() {
+  const root = document.getElementById("history");
+  root.innerHTML = "";
+
+  if (!entries.length) {
+    const p = document.createElement("p");
+    p.className = "small";
+    p.textContent =
+      "Ingen gjennomføringer ennå. Ditt eventyr starter her!";
+    root.appendChild(p);
+    return;
+  }
+
+  const sorted = [...entries].sort(
+    (a,b)=>b.date.localeCompare(a.date)
+  );
+
+  sorted.forEach(e=>{
+    const item = document.createElement("div");
+    item.className = "history-item";
+
+    const info = document.createElement("div");
+
+    const title = document.createElement("strong");
+    title.textContent =
+      TASKS[e.task].emoji+" "+TASKS[e.task].name;
+
+    const details = document.createElement("div");
+    details.className = "small";
+    details.textContent =
+      e.date+" · Vanskelighet "+e.rating+
+      "/9 · +"+points(e.rating)+" XP";
+
+    info.append(title,details);
+
+    const actions = document.createElement("div");
+    actions.className = "history-actions";
+
+    const edit = document.createElement("button");
+    edit.className = "secondary";
+    edit.textContent = "Endre";
+    edit.onclick = ()=>editEntry(e.id);
+
+    const remove = document.createElement("button");
+    remove.className = "danger";
+    remove.textContent = "Slett";
+    remove.onclick = ()=>deleteEntry(e.id);
+
+    actions.append(edit,remove);
+    item.append(info,actions);
+    root.appendChild(item);
+  });
+}
+
+function editEntry(id) {
+  const e = entries.find(x=>x.id===id);
+  if (!e) return;
+
+  const taskOptions = TASKS.map(
+    (t,i)=>(i+1)+": "+t.name
+  ).join("\n");
+
+  const newTask = prompt(
+    "Velg oppgave (1–5):\n"+taskOptions,
+    String(e.task+1)
+  );
+  if (newTask===null) return;
+
+  const taskNumber = Number(newTask);
+  if (!Number.isInteger(taskNumber) ||
+      taskNumber<1 || taskNumber>5) {
+    alert("Velg et tall fra 1 til 5.");
+    return;
+  }
+
+  const newRating = prompt(
+    "Vanskelighetsgrad (1–9):",
+    String(e.rating)
+  );
+  if (newRating===null) return;
+
+  const rating = Number(newRating);
+  if (!Number.isInteger(rating) ||
+      rating<1 || rating>9) {
+    alert("Velg et tall fra 1 til 9.");
+    return;
+  }
+
+  const newDate = prompt(
+    "Dato (ÅÅÅÅ-MM-DD):",e.date
+  );
+  if (newDate===null) return;
+
+  const candidate = {
+    id:e.id,
+    task:taskNumber-1,
+    rating:rating,
+    date:newDate
+  };
+
+  if (!validEntry(candidate)) {
+    alert("Ugyldig dato eller registrering.");
+    return;
+  }
+
+  Object.assign(e,candidate);
+  save();
+  render();
+}
+
+function deleteEntry(id) {
+  if (!confirm(
+    "Vil du slette denne gjennomføringen? XP justeres."
+  )) return;
+
+  entries = entries.filter(e=>e.id!==id);
+  save();
+  render();
+}
+
+function exportData() {
+  const data = JSON.stringify(entries,null,2);
+  const blob = new Blob([data],{
+    type:"application/json"
+  });
+
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "noras-quest-backup-"+today()+".json";
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+
+function importData(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+
+  reader.onload = ()=>{
+    try {
+      const data = JSON.parse(reader.result);
+
+      if (!Array.isArray(data) ||
+          !data.every(validEntry)) {
+        throw new Error("Ugyldig fil");
+      }
+
+      if (confirm(
+        "Vil du erstatte eksisterende progresjon "+
+        "med sikkerhetskopien?"
+      )) {
+        entries = data;
+        save();
+        render();
+        alert("Progresjonen er hentet inn!");
+      }
+    } catch(e) {
+      alert("Kunne ikke lese sikkerhetskopien.");
+    }
+    event.target.value = "";
+  };
+
+  reader.readAsText(file);
+}
+
+load();
+pending = TASKS.map(()=>5);
+createQuests();
+render();
+</script>
+</body>
+</html>
