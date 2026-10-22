@@ -4,302 +4,457 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Noras Quest – Å trene hjernen</title>
-
+<title>Noras Quest 3.0</title>
 <style>
 :root {
   --bg:#100c25;
-  --panel:#21183f;
-  --pink:#ff73c6;
-  --purple:#a78bfa;
-  --cyan:#65e9ff;
-  --text:#fff7ff;
-  --muted:#c8bedc;
+  --card:#241a46;
+  --card2:#332653;
+  --pink:#ff80d0;
+  --cyan:#5cf2e3;
+  --gold:#ffe38a;
+  --purple:#b59aff;
+  --white:#fff7ff;
+  --muted:#d0c5e1;
 }
 * {box-sizing:border-box}
 body {
   margin:0;
-  color:var(--text);
-  font-family:Trebuchet MS,Arial,sans-serif;
+  font-family:system-ui,Arial,sans-serif;
+  color:var(--white);
   background:
-    radial-gradient(circle at 15% 5%,#493077,transparent 35%),
-    radial-gradient(circle at 90% 20%,#3d235a,transparent 35%),
+    radial-gradient(circle at 10% 0%,#533384,transparent 35%),
+    radial-gradient(circle at 90% 30%,#194b62,transparent 35%),
     var(--bg);
   min-height:100vh;
 }
-header {
-  padding:35px 18px;
-  text-align:center;
+button,input {font:inherit}
+button {
+  background:linear-gradient(110deg,var(--pink),#ffc0e7);
+  border:0;
+  color:#241333;
+  font-weight:800;
+  border-radius:12px;
+  padding:11px 15px;
+  cursor:pointer;
 }
-.logo {
-  font-size:13px;
-  letter-spacing:4px;
-  color:var(--cyan);
-  font-weight:bold;
+button:hover {filter:brightness(1.12)}
+button:focus-visible,input:focus-visible {
+  outline:3px solid var(--cyan);
 }
-h1 {
-  font-size:clamp(32px,7vw,60px);
-  margin:12px 0;
+button.secondary {background:#57467a;color:white}
+button:disabled {opacity:.5;cursor:default}
+header {text-align:center;padding:30px 15px 15px}
+header h1 {
+  font-size:clamp(36px,7vw,65px);
   color:var(--pink);
-  text-shadow:3px 3px #573b9b;
+  text-shadow:3px 4px #543b9b;
+  margin:8px 0;
 }
-.subtitle {color:var(--muted)}
-main {max-width:1050px;margin:auto;padding:15px}
+header p {color:var(--muted)}
+.eyebrow {color:var(--cyan);letter-spacing:4px;font-size:12px}
+main {max-width:1100px;margin:auto;padding:15px}
 .panel,.quest {
-  background:rgba(33,24,63,.94);
-  border:1px solid #66518b;
+  background:linear-gradient(145deg,#291e4c,#1d1838);
+  border:1px solid #67518e;
   border-radius:20px;
   padding:22px;
   margin-bottom:18px;
-  box-shadow:0 8px 25px #08051370;
 }
-.stats {
+h2 {color:var(--pink);margin-top:0}
+h3 {margin:8px 0}
+.small {font-size:13px;color:var(--muted)}
+.tabs {display:flex;gap:8px;overflow-x:auto;margin-bottom:20px}
+.tabs button {white-space:nowrap;background:#41315f;color:white}
+.tabs button.active {background:var(--pink);color:#261336}
+.page {display:none}
+.page.active {display:block}
+.hero {display:grid;grid-template-columns:240px 1fr;gap:20px}
+.stage {
+  height:270px;
+  border-radius:20px;
+  position:relative;
+  overflow:hidden;
   display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:12px;
+  place-items:center;
+  background:radial-gradient(circle,#5a428f,#1c173d 75%);
 }
+.stage:before {
+  content:"✦ ✧ ✦ ✧";
+  position:absolute;
+  top:12px;
+  color:var(--gold);
+  font-size:25px;
+  letter-spacing:12px;
+  animation:glow 2s infinite alternate;
+}
+.avatar {
+  width:190px;
+  height:230px;
+  animation:float 3s ease-in-out infinite;
+  filter:drop-shadow(0 10px 8px #0006);
+}
+.aura {
+  position:absolute;
+  inset:25px;
+  border:2px solid #5cf2e355;
+  border-radius:50%;
+  animation:pulse 3s infinite;
+}
+.accessory {
+  position:absolute;
+  top:45px;
+  right:30px;
+  font-size:36px;
+}
+.stats {display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
 .stat {
-  background:#302451;
-  padding:20px 10px;
-  border-radius:15px;
+  background:var(--card2);
+  border-radius:14px;
+  padding:15px 8px;
   text-align:center;
 }
-.stat strong {
-  display:block;
-  font-size:30px;
-  color:var(--cyan);
-}
-.stat span {font-size:12px;color:var(--muted)}
-.bar {
-  height:16px;
-  border-radius:20px;
-  background:#100d27;
-  overflow:hidden;
-  margin-top:15px;
-}
+.stat strong {display:block;font-size:27px;color:var(--cyan)}
+.stat span {font-size:11px;color:var(--muted)}
+.bar {height:16px;background:#100c25;border-radius:20px;overflow:hidden;margin:15px 0}
 .fill {
   height:100%;
-  background:linear-gradient(90deg,var(--purple),var(--pink));
-  width:0%;
-  transition:width .3s;
+  width:0;
+  background:linear-gradient(90deg,var(--cyan),var(--pink));
+  transition:width .5s;
 }
-h2 {color:var(--pink)}
-.quest-grid {
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
-  gap:16px;
-}
+.grid {display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:15px}
 .quest {margin:0}
-.quest h3 {font-size:19px;min-height:50px}
-.emoji {font-size:37px}
-.small {font-size:13px;color:var(--muted)}
-.rating {
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:8px;
-  margin:15px 0;
-}
-.rating strong {font-size:28px;color:var(--cyan)}
+.quest .emoji {font-size:40px}
+.quest h3 {min-height:50px}
 input[type=range] {width:100%;accent-color:var(--pink)}
-button {
-  cursor:pointer;
-  border:0;
-  border-radius:12px;
-  padding:12px 15px;
-  font-weight:bold;
-  color:#1b1030;
-  background:var(--pink);
-}
-button:hover {filter:brightness(1.12)}
-button.secondary {
-  background:#453765;
-  color:white;
-}
-button.danger {background:#ff8d9a}
-button:disabled {opacity:.5;cursor:not-allowed}
-.actions {display:flex;flex-wrap:wrap;gap:8px}
-.reward {
-  color:#ffe68a;
-  font-weight:bold;
-  margin:12px 0;
-}
-.history-item {
+.reward {color:var(--gold);font-weight:800;margin:12px 0}
+.row {display:flex;gap:9px;flex-wrap:wrap;align-items:center}
+.history {
+  padding:13px 0;
+  border-bottom:1px solid #594677;
   display:flex;
   justify-content:space-between;
   align-items:center;
-  gap:10px;
-  padding:14px 0;
-  border-bottom:1px solid #493962;
+  gap:12px;
 }
-.history-item:last-child {border:0}
-.history-actions {display:flex;gap:6px;flex-shrink:0}
-.history-actions button {padding:8px}
-input[type=date] {
-  background:#342750;
-  color:white;
-  border:1px solid #746197;
-  border-radius:9px;
-  padding:10px;
-  max-width:100%;
+.shop,.achievement {
+  background:var(--card2);
+  border:1px solid #66518d;
+  padding:18px;
+  border-radius:16px;
 }
-label {display:block;margin:10px 0}
-.note {
-  background:#35264f;
+.shop .icon {font-size:40px}
+.locked {opacity:.55}
+.calendar {
+  display:grid;
+  grid-template-columns:repeat(7,1fr);
+  gap:6px;
+}
+.day {
+  min-height:43px;
+  background:#382a55;
+  border-radius:10px;
+  display:grid;
+  place-items:center;
+  font-size:13px;
+}
+.day.done {
+  background:linear-gradient(135deg,#4aada9,#b15bb5);
+  font-weight:bold;
+}
+.day.today {outline:2px solid var(--cyan)}
+.day.empty {background:transparent}
+.weekday {text-align:center;color:var(--muted);font-size:12px}
+.notice {
+  background:#3b2c58;
+  border-radius:13px;
   padding:15px;
-  border-radius:12px;
-  color:#e9d8ff;
+  color:#f4e4ff;
 }
-footer {
+input[type=date] {
+  background:#3c2c59;
+  color:white;
+  border:1px solid #806ba3;
+  padding:10px;
+  border-radius:10px;
+}
+.toast {
+  position:fixed;
+  bottom:25px;
+  left:50%;
+  transform:translateX(-50%);
+  background:#fff0ff;
+  color:#241536;
+  padding:15px 24px;
+  border-radius:15px;
+  font-weight:900;
+  z-index:50;
+  box-shadow:0 10px 35px #0008;
   text-align:center;
-  padding:30px;
-  color:var(--muted);
 }
-@media(max-width:550px) {
-  .stats {gap:6px}
+.confetti {
+  position:fixed;
+  top:-30px;
+  pointer-events:none;
+  z-index:40;
+  animation:fall 2s linear forwards;
+}
+footer {text-align:center;color:var(--muted);padding:30px}
+@keyframes float {
+  0%,100% {transform:translateY(0)}
+  50% {transform:translateY(-10px)}
+}
+@keyframes glow {to {opacity:.3}}
+@keyframes pulse {
+  50% {transform:scale(1.07);opacity:.4}
+}
+@keyframes fall {
+  to {transform:translateY(110vh) rotate(720deg);opacity:0}
+}
+@media(max-width:650px) {
+  .hero {grid-template-columns:1fr}
+  .stage {max-width:300px;width:100%;margin:auto}
+  .panel {padding:16px}
   .stat strong {font-size:23px}
-  .panel,.quest {padding:16px}
-  .history-item {align-items:flex-start;flex-direction:column}
+  .history {flex-direction:column;align-items:flex-start}
 }
 </style>
 </head>
 
 <body>
 <header>
-  <div class="logo">✦ LEVEL UP YOUR MIND ✦</div>
+  <div class="eyebrow">✦ LEVEL UP YOUR MIND ✦</div>
   <h1>🌸 NORAS QUEST 🌸</h1>
-  <p class="subtitle">Å trene hjernen – ett modig steg om gangen</p>
+  <p>Å trene hjernen – ett modig steg om gangen</p>
+  <button class="secondary" id="soundButton"
+    onclick="toggleSound()">🔊 Lyd på</button>
 </header>
 
 <main>
-<section class="panel">
-  <h2>✨ Min karakter</h2>
-  <div class="stats">
-    <div class="stat">
-      <strong id="totalXP">0</strong>
-      <span>TOTAL XP</span>
+<nav class="tabs">
+  <button class="active" onclick="showPage('home',this)">🏠 Hjem</button>
+  <button onclick="showPage('quests',this)">⚔️ Quests</button>
+  <button onclick="showPage('shop',this)">🎁 Belønninger</button>
+  <button onclick="showPage('awards',this)">🏆 Achievements</button>
+  <button onclick="showPage('calendarPage',this)">📅 Kalender</button>
+  <button onclick="showPage('log',this)">📜 Logg</button>
+</nav>
+
+<section id="home" class="page active">
+  <div class="panel hero">
+    <div class="stage">
+      <div class="aura"></div>
+
+      <!-- Anime-idol inspirert av Hatsune Miku -->
+      <svg class="avatar" viewBox="0 0 200 250"
+        xmlns="http://www.w3.org/2000/svg"
+        role="img" aria-label="Turkishåret anime-avatar">
+        <defs>
+          <linearGradient id="hair" x2="1" y2="1">
+            <stop stop-color="#78fff0"/>
+            <stop offset="1" stop-color="#159fba"/>
+          </linearGradient>
+        </defs>
+
+        <!-- Lange tvillinghaler -->
+        <path d="M55 55 Q8 80 18 205 Q32 237 43 195
+          L63 72Z" fill="url(#hair)"/>
+        <path d="M145 55 Q192 80 182 205 Q168 237
+          157 195 L137 72Z" fill="url(#hair)"/>
+
+        <!-- Kropp og idol-antrekk -->
+        <path d="M73 153 L127 153 L148 234
+          L52 234Z" fill="#242b48"/>
+        <path d="M83 157 L117 157 L107 205
+          L93 205Z" fill="#dffeff"/>
+        <path d="M98 166 L105 166 L113 217
+          L101 228 L94 217Z" fill="#35d9d0"/>
+        <path d="M52 234 L148 234 L158 246
+          L42 246Z" fill="#23c8d0"/>
+        <path d="M73 159 L52 199 L42 189
+          L60 151Z" fill="#333956"/>
+        <path d="M127 159 L148 199 L158 189
+          L140 151Z" fill="#333956"/>
+
+        <!-- Ansikt -->
+        <ellipse cx="100" cy="102" rx="43" ry="53"
+          fill="#ffe0d2"/>
+        <ellipse cx="64" cy="106" rx="5" ry="10"
+          fill="#ffd2c4"/>
+        <ellipse cx="136" cy="106" rx="5" ry="10"
+          fill="#ffd2c4"/>
+
+        <!-- Hår -->
+        <path d="M56 101 Q40 36 98 33
+          Q161 35 144 102
+          L128 71 L116 96 L104 69
+          L91 96 L80 70Z" fill="url(#hair)"/>
+        <path d="M58 69 Q100 19 143 69"
+          fill="none" stroke="#b4fff5" stroke-width="5"/>
+
+        <!-- Hårspenner -->
+        <rect x="48" y="57" width="17" height="25"
+          rx="3" fill="#24263d" stroke="#ff79c9" stroke-width="3"/>
+        <rect x="135" y="57" width="17" height="25"
+          rx="3" fill="#24263d" stroke="#ff79c9" stroke-width="3"/>
+
+        <!-- Øyne -->
+        <ellipse cx="82" cy="109" rx="10" ry="14"
+          fill="#fff"/>
+        <ellipse cx="118" cy="109" rx="10" ry="14"
+          fill="#fff"/>
+        <ellipse cx="83" cy="110" rx="6" ry="10"
+          fill="#19b6b4"/>
+        <ellipse cx="117" cy="110" rx="6" ry="10"
+          fill="#19b6b4"/>
+        <circle cx="85" cy="106" r="3" fill="white"/>
+        <circle cx="119" cy="106" r="3" fill="white"/>
+
+        <!-- Kinn og smil -->
+        <ellipse cx="70" cy="125" rx="9" ry="4"
+          fill="#ff9fb7" opacity=".6"/>
+        <ellipse cx="130" cy="125" rx="9" ry="4"
+          fill="#ff9fb7" opacity=".6"/>
+        <path d="M93 132 Q100 140 107 132"
+          stroke="#d76e8d" stroke-width="2"
+          fill="none" stroke-linecap="round"/>
+      </svg>
+
+      <div class="accessory" id="avatarAccessory">✨</div>
     </div>
-    <div class="stat">
-      <strong id="level">1</strong>
-      <span>LEVEL</span>
-    </div>
-    <div class="stat">
-      <strong id="weeklyXP">0</strong>
-      <span>XP DENNE UKEN</span>
+
+    <div>
+      <h2>💙 Nora – Brain Trainer</h2>
+      <p id="rankName">Rookie Explorer</p>
+      <div class="stats">
+        <div class="stat"><strong id="totalXP">0</strong><span>TOTAL XP</span></div>
+        <div class="stat"><strong id="level">1</strong><span>LEVEL</span></div>
+        <div class="stat"><strong id="weekXP">0</strong><span>UKENS XP</span></div>
+      </div>
+      <div class="bar"><div class="fill" id="levelFill"></div></div>
+      <p class="small" id="levelInfo"></p>
+      <p id="message">Hvert lille steg teller! ✨</p>
+      <button onclick="showPage('quests')">⚔️ Start et quest!</button>
     </div>
   </div>
-  <div class="bar"><div class="fill" id="levelBar"></div></div>
-  <p class="small" id="levelText"></p>
-</section>
 
-<section class="panel">
-  <h2>🎮 Velg dagens quest</h2>
-  <p class="small">
-    Velg hvor vanskelig utfordringen kjennes.
-    Du får XP først når du markerer den som gjennomført.
-    Du kan gjøre samme quest så mange ganger du vil.
-  </p>
-  <div class="quest-grid" id="quests"></div>
-</section>
-
-<section class="panel">
-  <h2>🏆 Ukens progresjon</h2>
-  <div class="stats">
-    <div class="stat">
-      <strong id="weeklyCount">0</strong>
-      <span>GJENNOMFØRT</span>
-    </div>
-    <div class="stat">
-      <strong id="weeklyHard">0</strong>
-      <span>VANSKELIGE QUESTS</span>
-    </div>
-    <div class="stat">
-      <strong id="weeklyDays">0</strong>
-      <span>AKTIVE DAGER</span>
+  <div class="panel">
+    <h2>🌟 Denne uken</h2>
+    <div class="stats">
+      <div class="stat"><strong id="weekCount">0</strong><span>QUESTS</span></div>
+      <div class="stat"><strong id="weekHard">0</strong><span>VANSKELIGE</span></div>
+      <div class="stat"><strong id="weekDays">0</strong><span>AKTIVE DAGER</span></div>
     </div>
   </div>
-  <p class="small" id="weekLabel"></p>
-</section>
-
-<section class="panel">
-  <h2>📜 Min quest-logg</h2>
-  <p class="small">
-    Her kan du se, endre og slette gjennomføringer.
-  </p>
-  <div id="history"></div>
-</section>
-
-<section class="panel">
-  <h2>💾 Ta vare på progresjonen</h2>
-  <p class="small">
-    Resultatene lagres automatisk i denne nettleseren.
-    Ta gjerne en sikkerhetskopi.
-  </p>
-  <div class="actions">
-    <button onclick="exportData()">Last ned sikkerhetskopi</button>
-    <button class="secondary"
-      onclick="document.getElementById('importFile').click()">
-      Hent sikkerhetskopi
-    </button>
-    <input type="file" id="importFile" accept=".json"
-      hidden onchange="importData(event)">
+  <div class="notice">
+    💜 Dette er trening, ikke en konkurranse.
+    Vanskelighetsgraden bestemmer du selv.
+    Det er lov å ha både lette og vanskelige dager.
   </div>
 </section>
 
-<section class="panel">
-  <div class="note">
-    🌷 Husk: Du trenger ikke være perfekt.
-    Det viktige er at du øver. Noen dager er vanskeligere
-    enn andre, og du bestemmer selv tempoet.
+<section id="quests" class="page">
+  <div class="panel">
+    <h2>⚔️ Dagens quests</h2>
+    <p class="small">Velg vanskelighetsgrad 1–9.
+    Du får XP først når du har gjennomført oppgaven.</p>
+    <div class="grid" id="questGrid"></div>
+  </div>
+</section>
+
+<section id="shop" class="page">
+  <div class="panel">
+    <h2>🎁 Belønningsbutikk</h2>
+    <p class="small">Lås opp tilbehør til avataren med XP.
+    Poengene brukes ikke opp.</p>
+    <div class="grid" id="shopGrid"></div>
+  </div>
+</section>
+
+<section id="awards" class="page">
+  <div class="panel">
+    <h2>🏆 Mine achievements</h2>
+    <div class="grid" id="awardGrid"></div>
+  </div>
+</section>
+
+<section id="calendarPage" class="page">
+  <div class="panel">
+    <h2>📅 Min treningskalender</h2>
+    <div class="row">
+      <button class="secondary" onclick="moveMonth(-1)">◀</button>
+      <h3 id="monthTitle"></h3>
+      <button class="secondary" onclick="moveMonth(1)">▶</button>
+    </div>
+    <div class="calendar" id="calendar"></div>
+    <p class="small">Fargede dager viser gjennomførte quests.</p>
+  </div>
+</section>
+
+<section id="log" class="page">
+  <div class="panel">
+    <h2>📜 Quest-logg</h2>
+    <p class="small">Du kan endre eller slette registreringer.
+    Poeng og nivå beregnes automatisk på nytt.</p>
+    <div id="history"></div>
+  </div>
+  <div class="panel">
+    <h2>💾 Sikkerhetskopi</h2>
+    <div class="row">
+      <button onclick="exportData()">Last ned sikkerhetskopi</button>
+      <button class="secondary"
+        onclick="document.getElementById('importFile').click()">
+        Hent sikkerhetskopi
+      </button>
+      <input id="importFile" type="file" accept=".json"
+        hidden onchange="importData(event)">
+    </div>
+    <p class="small">Data lagres lokalt i nettleseren,
+    ikke på GitHub. Bruk sikkerhetskopi før du bytter enhet.</p>
   </div>
 </section>
 </main>
 
-<footer>Made for Nora ✦ Your own adventure</footer>
+<footer>💙 Noras Quest · Level up your mind ✦</footer>
 
 <script>
 const TASKS = [
-  {
-    name:"Gå på skolen selv om jeg ikke vil",
-    emoji:"🏫"
-  },
-  {
-    name:"Snakke med noen jeg ikke kjenner så godt",
-    emoji:"💬"
-  },
-  {
-    name:"Sette meg på bord med noen som ikke går på RM",
-    emoji:"🍱"
-  },
-  {
-    name:"Ta oppvasken på skolen",
-    emoji:"🫧"
-  },
-  {
-    name:"Legge meg tidlig nok til å få nok søvn",
-    emoji:"🌙"
-  }
+  ["🏫","Gå på skolen selv om jeg ikke vil"],
+  ["💬","Snakke med noen jeg ikke kjenner så godt"],
+  ["🍱","Sette meg på bord med noen som ikke går på RM"],
+  ["🫧","Ta oppvasken på skolen"],
+  ["🌙","Legge meg tidlig nok til å få nok søvn"]
 ];
 
-const STORAGE_KEY = "norasQuestV1";
+const ITEMS = [
+  ["✨","Stjernestøv",0],
+  ["🎀","Rosa sløyfe",100],
+  ["🎧","Idol-hodetelefoner",250],
+  ["👑","Neonkrone",500],
+  ["🦋","Sommerfugl",800],
+  ["🐉","Mini-drage",1200],
+  ["💎","Krystall",1800],
+  ["🌈","Regnbueaura",2500]
+];
+
+const KEY = "norasQuestV1";
+const SOUND_KEY = "norasQuestSound";
+const ITEM_KEY = "norasQuestItem";
+
 let entries = [];
-let pending = [];
+let selected = TASKS.map(()=>5);
+let soundOn = localStorage.getItem(SOUND_KEY)!=="off";
+let equipped = localStorage.getItem(ITEM_KEY)||"0";
+let calendarMonth = new Date();
+let audioContext = null;
 
-function points(rating) {
-  if (rating <= 3) return 10;
-  if (rating <= 6) return 25;
-  return 50;
+function points(r) {
+  return r<=3 ? 10 : r<=6 ? 25 : 50;
 }
 
-function difficulty(rating) {
-  if (rating <= 3) return "Lett";
-  if (rating <= 6) return "Middels";
-  return "Skikkelig vanskelig";
-}
-
-function today() {
-  const d = new Date();
-  return localDate(d);
+function ratingName(r) {
+  return r<=3 ? "Lett" : r<=6 ? "Middels" : "Vanskelig";
 }
 
 function localDate(d) {
@@ -308,339 +463,504 @@ function localDate(d) {
     String(d.getDate()).padStart(2,"0");
 }
 
-function startOfWeek() {
+function today() {return localDate(new Date())}
+
+function weekStart() {
   const d = new Date();
-  d.setHours(12,0,0,0);
-  const day = (d.getDay()+6)%7;
-  d.setDate(d.getDate()-day);
+  d.setDate(d.getDate()-(d.getDay()+6)%7);
   return localDate(d);
 }
 
 function validEntry(e) {
-  return e &&
-    typeof e.id === "string" &&
-    Number.isInteger(e.task) &&
-    e.task >= 0 && e.task < TASKS.length &&
-    Number.isInteger(e.rating) &&
-    e.rating >= 1 && e.rating <= 9 &&
-    typeof e.date === "string" &&
-    /^\d{4}-\d{2}-\d{2}$/.test(e.date) &&
-    !Number.isNaN(new Date(e.date+"T12:00:00").getTime());
+  if (!e || typeof e.id!=="string" ||
+      !Number.isInteger(e.task) ||
+      e.task<0 || e.task>=TASKS.length ||
+      !Number.isInteger(e.rating) ||
+      e.rating<1 || e.rating>9 ||
+      typeof e.date!=="string" ||
+      !/^\d{4}-\d{2}-\d{2}$/.test(e.date)) return false;
+
+  const d = new Date(e.date+"T12:00:00");
+  return !Number.isNaN(d.getTime()) &&
+    localDate(d)===e.date;
 }
 
 function load() {
   try {
-    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
-    if (Array.isArray(saved)) {
-      entries = saved.filter(validEntry);
-    }
-  } catch(e) {
-    entries = [];
-  }
+    const data=JSON.parse(localStorage.getItem(KEY));
+    if(Array.isArray(data)) entries=data.filter(validEntry);
+  } catch(e) {entries=[]}
 }
 
 function save() {
   try {
-    localStorage.setItem(STORAGE_KEY,JSON.stringify(entries));
+    localStorage.setItem(KEY,JSON.stringify(entries));
   } catch(e) {
-    alert("Kunne ikke lagre. Ta en sikkerhetskopi.");
+    alert("Lagring feilet. Ta en sikkerhetskopi.");
   }
 }
 
-function createQuests() {
-  const root = document.getElementById("quests");
-  root.innerHTML = "";
+function totalXP() {
+  return entries.reduce((s,e)=>s+points(e.rating),0);
+}
 
-  TASKS.forEach((task,i)=>{
-    const card = document.createElement("div");
-    card.className = "quest";
+function level() {
+  return Math.floor(totalXP()/200)+1;
+}
 
-    const emoji = document.createElement("div");
-    emoji.className = "emoji";
-    emoji.textContent = task.emoji;
+function showPage(id,button) {
+  document.querySelectorAll(".page").forEach(
+    p=>p.classList.toggle("active",p.id===id)
+  );
+  document.querySelectorAll(".tabs button").forEach(
+    b=>b.classList.remove("active")
+  );
+  const names=["home","quests","shop","awards","calendarPage","log"];
+  const index=names.indexOf(id);
+  if(index>=0) document.querySelectorAll(".tabs button")[index]
+    .classList.add("active");
+  window.scrollTo(0,0);
+  if(button) playSound("click");
+}
 
-    const heading = document.createElement("h3");
-    heading.textContent = task.name;
+function toggleSound() {
+  soundOn=!soundOn;
+  localStorage.setItem(SOUND_KEY,soundOn?"on":"off");
+  updateSoundButton();
+  if(soundOn) playSound("reward");
+}
 
-    const ratingLabel = document.createElement("div");
-    ratingLabel.className = "rating";
+function updateSoundButton() {
+  document.getElementById("soundButton").textContent=
+    soundOn?"🔊 Lyd på":"🔇 Lyd av";
+}
 
-    const label = document.createElement("span");
-    label.textContent = "Vanskelighetsgrad";
+// Spill-lyder laget med Web Audio API.
+// Ingen eksterne lydfiler er nødvendig.
+function tone(freq,duration,delay=0,type="sine",volume=.06) {
+  if(!soundOn) return;
+  try {
+    const AudioCtx=window.AudioContext||window.webkitAudioContext;
+    if(!AudioCtx) return;
+    if(!audioContext) audioContext=new AudioCtx();
+    if(audioContext.state==="suspended") audioContext.resume();
 
-    const value = document.createElement("strong");
-    value.id = "rating-"+i;
+    const osc=audioContext.createOscillator();
+    const gain=audioContext.createGain();
+    const start=audioContext.currentTime+delay;
 
-    ratingLabel.append(label,value);
+    osc.type=type;
+    osc.frequency.setValueAtTime(freq,start);
+    gain.gain.setValueAtTime(.0001,start);
+    gain.gain.exponentialRampToValueAtTime(volume,start+.015);
+    gain.gain.exponentialRampToValueAtTime(.0001,start+duration);
+    osc.connect(gain);
+    gain.connect(audioContext.destination);
+    osc.start(start);
+    osc.stop(start+duration+.03);
+  } catch(e) {}
+}
 
-    const slider = document.createElement("input");
-    slider.type = "range";
-    slider.min = 1;
-    slider.max = 9;
-    slider.step = 1;
-    slider.value = pending[i];
+function playSound(name) {
+  if(name==="click") tone(440,.09,0,"sine",.025);
+  if(name==="complete") {
+    [523,659,784,1047].forEach(
+      (f,i)=>tone(f,.22,i*.11,"triangle")
+    );
+  }
+  if(name==="level") {
+    [392,494,587,784,988,1175].forEach(
+      (f,i)=>tone(f,.25,i*.12,"triangle")
+    );
+  }
+  if(name==="reward") {
+    [784,988,1175].forEach(
+      (f,i)=>tone(f,.2,i*.1,"sine")
+    );
+  }
+}
 
-    const reward = document.createElement("div");
-    reward.className = "reward";
-    reward.id = "reward-"+i;
+function toast(text) {
+  document.querySelectorAll(".toast").forEach(e=>e.remove());
+  const el=document.createElement("div");
+  el.className="toast";
+  el.textContent=text;
+  document.body.appendChild(el);
+  setTimeout(()=>el.remove(),2600);
+}
 
-    const button = document.createElement("button");
-    button.textContent = "✓ Quest gjennomført!";
-    button.onclick = ()=>completeQuest(i);
+function confetti() {
+  const colors=["#ff80d0","#5cf2e3","#ffe38a","#b59aff"];
+  for(let i=0;i<35;i++) {
+    const el=document.createElement("div");
+    el.className="confetti";
+    el.style.left=Math.random()*100+"vw";
+    el.style.width="9px";
+    el.style.height="13px";
+    el.style.background=colors[i%colors.length];
+    el.style.animationDelay=Math.random()*.5+"s";
+    el.style.animationDuration=1.5+Math.random()*1.5+"s";
+    document.body.appendChild(el);
+    setTimeout(()=>el.remove(),3500);
+  }
+}
 
-    slider.oninput = ()=>{
-      pending[i] = Number(slider.value);
+function renderQuests() {
+  const root=document.getElementById("questGrid");
+  root.innerHTML="";
+  TASKS.forEach((t,i)=>{
+    const card=document.createElement("div");
+    card.className="quest";
+    card.innerHTML=
+      '<div class="emoji">'+t[0]+'</div>'+
+      '<h3>'+t[1]+'</h3>'+
+      '<p class="small">Hvor vanskelig kjennes dette?</p>'+
+      '<strong id="rate'+i+'"></strong>'+
+      '<input type="range" min="1" max="9" value="'+selected[i]+
+      '" id="slider'+i+'">'+
+      '<div class="reward" id="reward'+i+'"></div>'+
+      '<button id="complete'+i+'">✓ Gjennomført!</button>';
+
+    root.appendChild(card);
+    document.getElementById("slider"+i).oninput=e=>{
+      selected[i]=Number(e.target.value);
       updateRating(i);
     };
-
-    card.append(
-      emoji,heading,ratingLabel,slider,reward,button
-    );
-    root.appendChild(card);
+    document.getElementById("complete"+i).onclick=()=>{
+      completeQuest(i);
+    };
     updateRating(i);
   });
 }
 
 function updateRating(i) {
-  const r = pending[i];
-  document.getElementById("rating-"+i).textContent = r+"/9";
-  document.getElementById("reward-"+i).textContent =
-    difficulty(r)+" · +"+points(r)+" XP";
+  const r=selected[i];
+  document.getElementById("rate"+i).textContent=r+" / 9";
+  document.getElementById("reward"+i).textContent=
+    ratingName(r)+" · +"+points(r)+" XP";
 }
 
-function completeQuest(task) {
-  const rating = pending[task];
+function completeQuest(i) {
+  const oldLevel=level();
+  const r=selected[i];
 
   entries.push({
-    id:crypto.randomUUID ?
-      crypto.randomUUID() :
-      Date.now()+"-"+Math.random(),
-    task:task,
-    rating:rating,
+    id:window.crypto && crypto.randomUUID ?
+      crypto.randomUUID() : String(Date.now())+Math.random(),
+    task:i,
+    rating:r,
     date:today()
   });
 
   save();
   render();
-
-  alert(
-    "QUEST COMPLETE! 🌟\n"+
-    "+"+points(rating)+" XP\n"+
-    "Bra jobbet med å øve!"
+  playSound(level()>oldLevel?"level":"complete");
+  confetti();
+  toast(
+    level()>oldLevel ?
+      "🌟 LEVEL UP! Du er nå level "+level() :
+      "QUEST COMPLETE! +"+points(r)+" XP 💙"
   );
 }
 
-function render() {
-  const total = entries.reduce(
-    (sum,e)=>sum+points(e.rating),0
+function renderHome() {
+  const xp=totalXP();
+  const lv=level();
+  const week=entries.filter(
+    e=>e.date>=weekStart() && e.date<=today()
   );
 
-  const level = Math.floor(total/200)+1;
-  const progress = total%200;
-  const weekStart = startOfWeek();
+  document.getElementById("totalXP").textContent=xp;
+  document.getElementById("level").textContent=lv;
+  document.getElementById("weekXP").textContent=
+    week.reduce((s,e)=>s+points(e.rating),0);
 
-  const weekly = entries.filter(
-    e=>e.date>=weekStart && e.date<=today()
-  );
+  document.getElementById("levelFill").style.width=
+    (xp%200)/2+"%";
+  document.getElementById("levelInfo").textContent=
+    (xp%200)+" / 200 XP mot neste level";
 
-  document.getElementById("totalXP").textContent = total;
-  document.getElementById("level").textContent = level;
-  document.getElementById("weeklyXP").textContent =
-    weekly.reduce((s,e)=>s+points(e.rating),0);
+  document.getElementById("weekCount").textContent=week.length;
+  document.getElementById("weekHard").textContent=
+    week.filter(e=>e.rating>=7).length;
+  document.getElementById("weekDays").textContent=
+    new Set(week.map(e=>e.date)).size;
 
-  document.getElementById("levelBar").style.width =
-    (progress/200*100)+"%";
+  let rank="Rookie Explorer";
+  if(lv>=3) rank="Brave Adventurer";
+  if(lv>=6) rank="Neon Hero";
+  if(lv>=10) rank="Brain Warrior";
+  if(lv>=15) rank="Legendary Idol";
+  document.getElementById("rankName").textContent=
+    "✦ "+rank+" ✦";
 
-  document.getElementById("levelText").textContent =
-    progress+" / 200 XP mot neste nivå";
+  const messages=[
+    "Hvert lille steg teller! ✨",
+    "Du bygger mot ved å øve! 💙",
+    "Det er lov å prøve igjen! 🌸",
+    "Du bestemmer ditt eget tempo! 🎮",
+    "Å prøve er også en seier! ⭐"
+  ];
+  document.getElementById("message").textContent=
+    messages[Math.floor(xp/100)%messages.length];
 
-  document.getElementById("weeklyCount").textContent =
-    weekly.length;
+  if(!ITEMS[Number(equipped)] ||
+     xp<ITEMS[Number(equipped)][2]) equipped="0";
 
-  document.getElementById("weeklyHard").textContent =
-    weekly.filter(e=>e.rating>=7).length;
-
-  document.getElementById("weeklyDays").textContent =
-    new Set(weekly.map(e=>e.date)).size;
-
-  document.getElementById("weekLabel").textContent =
-    "Uken starter mandag "+weekStart;
-
-  renderHistory();
+  document.getElementById("avatarAccessory").textContent=
+    ITEMS[Number(equipped)][0];
 }
 
-function renderHistory() {
-  const root = document.getElementById("history");
-  root.innerHTML = "";
+function renderShop() {
+  const root=document.getElementById("shopGrid");
+  root.innerHTML="";
+  ITEMS.forEach((item,i)=>{
+    const unlocked=totalXP()>=item[2];
+    const card=document.createElement("div");
+    card.className="shop"+(unlocked?"":" locked");
 
-  if (!entries.length) {
-    const p = document.createElement("p");
-    p.className = "small";
-    p.textContent =
-      "Ingen gjennomføringer ennå. Ditt eventyr starter her!";
-    root.appendChild(p);
-    return;
-  }
+    const icon=document.createElement("div");
+    icon.className="icon";
+    icon.textContent=item[0];
 
-  const sorted = [...entries].sort(
-    (a,b)=>b.date.localeCompare(a.date)
-  );
+    const name=document.createElement("h3");
+    name.textContent=item[1];
 
-  sorted.forEach(e=>{
-    const item = document.createElement("div");
-    item.className = "history-item";
+    const price=document.createElement("p");
+    price.className="small";
+    price.textContent=unlocked?
+      "🔓 Låst opp":"🔒 Låses opp ved "+item[2]+" XP";
 
-    const info = document.createElement("div");
+    const btn=document.createElement("button");
+    btn.textContent=equipped===String(i)?"På avataren":"Bruk";
+    btn.disabled=!unlocked || equipped===String(i);
+    btn.onclick=()=>{
+      equipped=String(i);
+      localStorage.setItem(ITEM_KEY,equipped);
+      playSound("reward");
+      toast("✨ "+item[1]+" er valgt!");
+      render();
+    };
 
-    const title = document.createElement("strong");
-    title.textContent =
-      TASKS[e.task].emoji+" "+TASKS[e.task].name;
-
-    const details = document.createElement("div");
-    details.className = "small";
-    details.textContent =
-      e.date+" · Vanskelighet "+e.rating+
-      "/9 · +"+points(e.rating)+" XP";
-
-    info.append(title,details);
-
-    const actions = document.createElement("div");
-    actions.className = "history-actions";
-
-    const edit = document.createElement("button");
-    edit.className = "secondary";
-    edit.textContent = "Endre";
-    edit.onclick = ()=>editEntry(e.id);
-
-    const remove = document.createElement("button");
-    remove.className = "danger";
-    remove.textContent = "Slett";
-    remove.onclick = ()=>deleteEntry(e.id);
-
-    actions.append(edit,remove);
-    item.append(info,actions);
-    root.appendChild(item);
+    card.append(icon,name,price,btn);
+    root.appendChild(card);
   });
 }
 
+function renderAwards() {
+  const count=entries.length;
+  const hard=entries.filter(e=>e.rating>=7).length;
+  const days=new Set(entries.map(e=>e.date)).size;
+  const types=new Set(entries.map(e=>e.task)).size;
+
+  const awards=[
+    ["🌱","Første steg",count>=1,"Fullfør ditt første quest"],
+    ["⚔️","Quest Hunter",count>=5,"Fullfør 5 quests"],
+    ["💎","Quest Master",count>=20,"Fullfør 20 quests"],
+    ["🔥","Modig utfordrer",hard>=3,"Fullfør 3 vanskelige quests"],
+    ["🌈","Variasjon",types>=5,"Prøv alle fem oppgavene"],
+    ["📅","Fem dager",days>=5,"Øv på fem ulike dager"],
+    ["⭐","XP Collector",totalXP()>=500,"Samle 500 XP"],
+    ["👑","Superstar",totalXP()>=1500,"Samle 1500 XP"],
+    ["🎤","Idol Legend",level()>=15,"Nå level 15"]
+  ];
+
+  const root=document.getElementById("awardGrid");
+  root.innerHTML="";
+  awards.forEach(a=>{
+    const card=document.createElement("div");
+    card.className="achievement"+(a[2]?"":" locked");
+    const icon=document.createElement("div");
+    icon.style.fontSize="40px";
+    icon.textContent=a[2]?a[0]:"🔒";
+    const title=document.createElement("h3");
+    title.textContent=a[1];
+    const desc=document.createElement("p");
+    desc.className="small";
+    desc.textContent=a[3];
+    card.append(icon,title,desc);
+    root.appendChild(card);
+  });
+}
+
+function moveMonth(n) {
+  calendarMonth.setMonth(calendarMonth.getMonth()+n);
+  renderCalendar();
+  playSound("click");
+}
+
+function renderCalendar() {
+  const y=calendarMonth.getFullYear();
+  const m=calendarMonth.getMonth();
+  const first=new Date(y,m,1);
+  const count=new Date(y,m+1,0).getDate();
+
+  document.getElementById("monthTitle").textContent=
+    first.toLocaleDateString("nb-NO",{month:"long",year:"numeric"});
+
+  const root=document.getElementById("calendar");
+  root.innerHTML="";
+  ["Man","Tir","Ons","Tor","Fre","Lør","Søn"].forEach(d=>{
+    const el=document.createElement("div");
+    el.className="weekday";
+    el.textContent=d;
+    root.appendChild(el);
+  });
+
+  const offset=(first.getDay()+6)%7;
+  for(let i=0;i<offset;i++){
+    const el=document.createElement("div");
+    el.className="day empty";
+    root.appendChild(el);
+  }
+
+  for(let day=1;day<=count;day++){
+    const date=localDate(new Date(y,m,day));
+    const done=entries.filter(e=>e.date===date);
+    const el=document.createElement("div");
+    el.className="day"+(done.length?" done":"")+
+      (date===today()?" today":"");
+    el.textContent=day+(done.length?" ✦":"");
+    el.title=done.length+" gjennomføringer";
+    root.appendChild(el);
+  }
+}
+
+function renderHistory() {
+  const root=document.getElementById("history");
+  root.innerHTML="";
+
+  if(!entries.length) {
+    root.textContent="Ingen gjennomføringer ennå. 🌸";
+    return;
+  }
+
+  [...entries].sort((a,b)=>b.date.localeCompare(a.date))
+    .forEach(e=>{
+      const item=document.createElement("div");
+      item.className="history";
+
+      const info=document.createElement("div");
+      const title=document.createElement("strong");
+      title.textContent=TASKS[e.task][0]+" "+TASKS[e.task][1];
+      const detail=document.createElement("p");
+      detail.className="small";
+      detail.textContent=e.date+" · Vanskelighet "+e.rating+
+        "/9 · +"+points(e.rating)+" XP";
+      info.append(title,detail);
+
+      const buttons=document.createElement("div");
+      buttons.className="row";
+
+      const edit=document.createElement("button");
+      edit.className="secondary";
+      edit.textContent="Endre";
+      edit.onclick=()=>editEntry(e.id);
+
+      const del=document.createElement("button");
+      del.textContent="Slett";
+      del.onclick=()=>deleteEntry(e.id);
+
+      buttons.append(edit,del);
+      item.append(info,buttons);
+      root.appendChild(item);
+    });
+}
+
 function editEntry(id) {
-  const e = entries.find(x=>x.id===id);
-  if (!e) return;
+  const e=entries.find(x=>x.id===id);
+  if(!e)return;
 
-  const taskOptions = TASKS.map(
-    (t,i)=>(i+1)+": "+t.name
-  ).join("\n");
-
-  const newTask = prompt(
-    "Velg oppgave (1–5):\n"+taskOptions,
-    String(e.task+1)
+  const task=prompt(
+    "Oppgave (1–5):\n"+
+    TASKS.map((t,i)=>(i+1)+". "+t[1]).join("\n"),
+    e.task+1
   );
-  if (newTask===null) return;
+  if(task===null)return;
 
-  const taskNumber = Number(newTask);
-  if (!Number.isInteger(taskNumber) ||
-      taskNumber<1 || taskNumber>5) {
-    alert("Velg et tall fra 1 til 5.");
-    return;
-  }
+  const rating=prompt("Vanskelighet 1–9:",e.rating);
+  if(rating===null)return;
 
-  const newRating = prompt(
-    "Vanskelighetsgrad (1–9):",
-    String(e.rating)
-  );
-  if (newRating===null) return;
+  const date=prompt("Dato ÅÅÅÅ-MM-DD:",e.date);
+  if(date===null)return;
 
-  const rating = Number(newRating);
-  if (!Number.isInteger(rating) ||
-      rating<1 || rating>9) {
-    alert("Velg et tall fra 1 til 9.");
-    return;
-  }
-
-  const newDate = prompt(
-    "Dato (ÅÅÅÅ-MM-DD):",e.date
-  );
-  if (newDate===null) return;
-
-  const candidate = {
+  const candidate={
     id:e.id,
-    task:taskNumber-1,
-    rating:rating,
-    date:newDate
+    task:Number(task)-1,
+    rating:Number(rating),
+    date:date
   };
 
-  if (!validEntry(candidate)) {
-    alert("Ugyldig dato eller registrering.");
+  if(!validEntry(candidate)) {
+    alert("Ugyldig registrering. Ingen endringer lagret.");
     return;
   }
 
   Object.assign(e,candidate);
   save();
   render();
+  toast("Registreringen er oppdatert ✨");
 }
 
 function deleteEntry(id) {
-  if (!confirm(
-    "Vil du slette denne gjennomføringen? XP justeres."
-  )) return;
-
-  entries = entries.filter(e=>e.id!==id);
+  if(!confirm("Slette denne gjennomføringen?"))return;
+  entries=entries.filter(e=>e.id!==id);
   save();
   render();
+  toast("Registreringen er slettet");
 }
 
 function exportData() {
-  const data = JSON.stringify(entries,null,2);
-  const blob = new Blob([data],{
-    type:"application/json"
-  });
-
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "noras-quest-backup-"+today()+".json";
+  const blob=new Blob(
+    [JSON.stringify(entries,null,2)],
+    {type:"application/json"}
+  );
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.href=url;
+  a.download="noras-quest-backup-"+today()+".json";
   document.body.appendChild(a);
   a.click();
   a.remove();
-  URL.revokeObjectURL(url);
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
 }
 
 function importData(event) {
-  const file = event.target.files[0];
-  if (!file) return;
+  const file=event.target.files[0];
+  if(!file)return;
 
-  const reader = new FileReader();
-
-  reader.onload = ()=>{
+  const reader=new FileReader();
+  reader.onload=()=>{
     try {
-      const data = JSON.parse(reader.result);
+      const data=JSON.parse(reader.result);
+      if(!Array.isArray(data)||!data.every(validEntry))
+        throw Error("Ugyldig fil");
 
-      if (!Array.isArray(data) ||
-          !data.every(validEntry)) {
-        throw new Error("Ugyldig fil");
-      }
-
-      if (confirm(
-        "Vil du erstatte eksisterende progresjon "+
-        "med sikkerhetskopien?"
-      )) {
-        entries = data;
+      if(confirm("Erstatte eksisterende progresjon med denne?")) {
+        entries=data;
         save();
         render();
-        alert("Progresjonen er hentet inn!");
+        toast("Sikkerhetskopi hentet inn! 💙");
       }
     } catch(e) {
       alert("Kunne ikke lese sikkerhetskopien.");
     }
-    event.target.value = "";
+    event.target.value="";
   };
-
   reader.readAsText(file);
 }
 
+function render() {
+  renderHome();
+  renderShop();
+  renderAwards();
+  renderCalendar();
+  renderHistory();
+}
+
 load();
-pending = TASKS.map(()=>5);
-createQuests();
+updateSoundButton();
+renderQuests();
 render();
 </script>
 </body>
